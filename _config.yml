@@ -1,5 +1,7 @@
-permalink:   /:title/
-highlighter: pygments
-paginate:    1
-markdown:    kramdown
-paginate_path: "page:num"
+url: http://promisekit.org
+permalink: /news/:year/:month/:title/
+highlighter: rouge
+gems:
+  - jekyll-redirect-from
+whitelist:
+  - jekyll-redirect-from
