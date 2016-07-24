@@ -15,34 +15,35 @@ import Dispatch
      }
 
  - Returns: A new promise that resolves once all the provided promises resolve.
+ - SeeAlso: `PromiseKit.Error.join`
 */
-public func join<T>(promises: Promise<T>...) -> Promise<[T]> {
-    return join(promises)
+public func when<T>(resolved promises: Promise<T>...) -> Promise<[T]> {
+    return when(resolved: promises)
 }
 
-public func join(promises: [Promise<Void>]) -> Promise<Void> {
-    return join(promises).then(on: zalgo) { (_: [Void]) in return Promise() }
+public func when(resolved promises: [Promise<Void>]) -> Promise<Void> {
+    return when(resolved: promises).then(on: zalgo) { (_: [Void]) in return Promise.fulfilled() }
 }
 
-public func join<T>(promises: [Promise<T>]) -> Promise<[T]> {
-    guard !promises.isEmpty else { return Promise<[T]>([]) }
+public func when<T>(resolved promises: [Promise<T>]) -> Promise<[T]> {
+    guard !promises.isEmpty else { return Promise.resolved(value: []) }
   
     var countdown = promises.count
-    let barrier = dispatch_queue_create("org.promisekit.barrier.join", DISPATCH_QUEUE_CONCURRENT)
+    let barrier = DispatchQueue(label: "org.promisekit.barrier.join", attributes: .concurrent)
     var rejected = false
 
     return Promise { fulfill, reject in
         for promise in promises {
-            promise.pipe { resolution in
-                dispatch_barrier_sync(barrier) {
-                    if case .Rejected(_, let token) = resolution {
+            promise.state.pipe { resolution in
+                __dispatch_barrier_sync(barrier) {
+                    if case .rejected(_, let token) = resolution {
                         token.consumed = true  // the parent Error.Join consumes all
                         rejected = true
                     }
                     countdown -= 1
                     if countdown == 0 {
                         if rejected {
-                            reject(Error.Join(promises))
+                            reject(Error.join(promises))
                         } else {
                             fulfill(promises.map{ $0.value! })
                         }
@@ -51,4 +52,14 @@ public func join<T>(promises: [Promise<T>]) -> Promise<[T]> {
             }
         }
     }
+}
+
+@available(*, deprecated, renamed: "when(resolved:)")
+public func join<T>(_ promises: Promise<T>...) -> Promise<[T]> {
+    return when(resolved: promises)
+}
+
+@available(*, deprecated, renamed: "when(resolved:)")
+public func join<T>(promises: [Promise<T>]) -> Promise<[T]> {
+    return when(resolved: promises)
 }

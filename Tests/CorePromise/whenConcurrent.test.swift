@@ -4,50 +4,50 @@ import PromiseKit
 class WhenConcurrentTestCase_Swift: XCTestCase {
 
     func testWhen() {
-        let e = expectationWithDescription("")
+        let e = expectation(description: "")
 
-        var numbers = (0..<42).generate()
+        var numbers = (0..<42).makeIterator()
         let squareNumbers = numbers.map { $0 * $0 }
 
-        let generator = AnyGenerator<Promise<Int>> {
+        let generator = AnyIterator<Promise<Int>> {
             guard let number = numbers.next() else {
                 return nil
             }
 
-            return after(0.01).then {
+            return after(interval: 0.01).then {
                 return number * number
             }
         }
 
-        when(generator, concurrently: 5)
+        when(fulfilled: generator, concurrently: 5)
             .then { numbers -> Void in
                 if numbers == squareNumbers {
                     e.fulfill()
                 }
             }
 
-        waitForExpectationsWithTimeout(3, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testWhenEmptyGenerator() {
-        let e = expectationWithDescription("")
+        let e = expectation(description: "")
 
-        let generator = AnyGenerator<Promise<Int>> {
+        let generator = AnyIterator<Promise<Int>> {
             return nil
         }
 
-        when(generator, concurrently: 5)
+        when(fulfilled: generator, concurrently: 5)
             .then { numbers -> Void in
                 if numbers.count == 0 {
                     e.fulfill()
                 }
         }
 
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
 
     func testWhenGeneratorError() {
-        enum LocalError: ErrorType {
+        enum LocalError: ErrorProtocol {
             case Unknown
             case DivisionByZero
         }
@@ -55,31 +55,31 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
         let expectedErrorIndex = 42
         let expectedError = LocalError.DivisionByZero
 
-        let e = expectationWithDescription("")
+        let e = expectation(description: "")
 
-        var numbers = (-expectedErrorIndex..<expectedErrorIndex).generate()
+        var numbers = (-expectedErrorIndex..<expectedErrorIndex).makeIterator()
 
-        let generator = AnyGenerator<Promise<Int>> {
+        let generator = AnyIterator<Promise<Int>> {
             guard let number = numbers.next() else {
                 return nil
             }
 
-            return after(0.01).then {
+            return after(interval: 0.01).then {
                 guard number != 0 else {
-                    return Promise(error: expectedError)
+                    return Promise.resolved(error: expectedError)
                 }
 
-                return Promise(100500 / number)
+                return Promise.resolved(value: 100500 / number)
             }
         }
 
-        when(generator, concurrently: 3)
-            .error { error in
+        when(fulfilled: generator, concurrently: 3)
+            .catch { error in
                 guard let error = error as? Error else {
                     return
                 }
 
-                guard case .When(let errorIndex, let internalError) = error else {
+                guard case .when(let errorIndex, let internalError) = error else {
                     return
                 }
 
@@ -94,7 +94,7 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
                 e.fulfill()
             }
 
-        waitForExpectationsWithTimeout(3, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testWhenConcurrency() {
@@ -102,11 +102,11 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
         var currentConcurrently = 0
         var maxConcurrently = 0
 
-        let e = expectationWithDescription("")
+        let e = expectation(description: "")
 
-        var numbers = (0..<42).generate()
+        var numbers = (0..<42).makeIterator()
 
-        let generator = AnyGenerator<Promise<Int>> {
+        let generator = AnyIterator<Promise<Int>> {
             currentConcurrently += 1
             maxConcurrently = max(maxConcurrently, currentConcurrently)
 
@@ -114,31 +114,35 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
                 return nil
             }
 
-            return after(0.01).then {
+            return after(interval: 0.01).then {
                 currentConcurrently -= 1
-                return Promise(number * number)
+                return Promise.resolved(value: number * number)
             }
         }
 
-        when(generator, concurrently: expectedConcurrently)
+        when(fulfilled: generator, concurrently: expectedConcurrently)
             .then { numbers -> Void in
                 if expectedConcurrently == maxConcurrently {
                     e.fulfill()
                 }
         }
 
-        waitForExpectationsWithTimeout(3, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testWhenConcurrencyLessThanZero() {
-        let generator = AnyGenerator<Promise<Int>> { XCTFail(); return nil }
+        InjectedErrorUnhandler = { err in
+            guard case Error.whenConcurrentlyZero = err else { return XCTFail() }
+        }
 
-        let p1 = when(generator, concurrently: 0)
-        let p2 = when(generator, concurrently: -1)
+        let generator = AnyIterator<Promise<Int>> { XCTFail(); return nil }
+
+        let p1 = when(fulfilled: generator, concurrently: 0)
+        let p2 = when(fulfilled: generator, concurrently: -1)
 
         guard let e1 = p1.error else { return XCTFail() }
         guard let e2 = p2.error else { return XCTFail() }
-        guard case Error.WhenConcurrentlyZero = e1 else { return XCTFail() }
-        guard case Error.WhenConcurrentlyZero = e2 else { return XCTFail() }
+        guard case Error.whenConcurrentlyZero = e1 else { return XCTFail() }
+        guard case Error.whenConcurrentlyZero = e2 else { return XCTFail() }
     }
 }

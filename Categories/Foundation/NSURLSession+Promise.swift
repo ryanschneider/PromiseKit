@@ -26,51 +26,49 @@ import PromiseKit
  an instance method `promise`. If you need more complicated behavior
  we recommend wrapping that usage in a Promise initializer.
 */
-extension NSURLSession {
-    public class func GET(URL: String, query: [NSObject: AnyObject]? = nil) -> URLDataPromise {
-        return start(try OMGHTTPURLRQ.GET(URL, query))
+extension URLSession {
+    public class func GET(_ URL: String, query: [NSObject: AnyObject]? = nil) -> URLDataPromise {
+        return start(try OMGHTTPURLRQ.get(URL, query) as URLRequest)
     }
 
-    public class func POST(URL: String, formData: [NSObject: AnyObject]? = nil) -> URLDataPromise {
-        return start(try OMGHTTPURLRQ.POST(URL, formData))
+    public class func POST(_ URL: String, formData: [NSObject: AnyObject]? = nil) -> URLDataPromise {
+        return start(try OMGHTTPURLRQ.post(URL, formData) as URLRequest)
     }
 
-    public class func POST(URL: String, multipartFormData: OMGMultipartFormData) -> URLDataPromise {
-        return start(try OMGHTTPURLRQ.POST(URL, multipartFormData))
+    public class func POST(_ URL: String, multipartFormData: OMGMultipartFormData) -> URLDataPromise {
+        return start(try OMGHTTPURLRQ.post(URL, multipartFormData) as URLRequest)
     }
 
-    public class func PUT(URL: String, JSON: NSDictionary? = nil) -> URLDataPromise {
+    public class func PUT(_ URL: String, JSON: NSDictionary? = nil) -> URLDataPromise {
         return start(try OMGHTTPURLRQ.PUT(URL, JSON: JSON))
     }
 
-    public class func DELETE(URL: String) -> URLDataPromise {
-        return start(try OMGHTTPURLRQ.DELETE(URL, nil))
+    public class func DELETE(_ URL: String) -> URLDataPromise {
+        return start(try OMGHTTPURLRQ.delete(URL, nil) as URLRequest)
     }
 
     public class func PATCH(URL: String, JSON: NSDictionary) -> URLDataPromise {
         return start(try OMGHTTPURLRQ.PATCH(URL, JSON: JSON))
     }
 
-    public func promise(request: NSURLRequest) -> URLDataPromise {
+    public func promise(_ request: URLRequest) -> URLDataPromise {
         return start(request, session: self)
     }
 }
 
-private func start(@autoclosure body: () throws -> NSURLRequest, session: NSURLSession = NSURLSession.sharedSession()) -> URLDataPromise {
+private func start(_ body: @autoclosure () throws -> URLRequest, session: URLSession = URLSession.shared) -> URLDataPromise {
     do {
         var request = try body()
 
-        if request.valueForHTTPHeaderField("User-Agent") == nil {
-            let rq = request.mutableCopy() as! NSMutableURLRequest
-            rq.setValue(OMGUserAgent(), forHTTPHeaderField: "User-Agent")
-            request = rq
+        if request.value(forHTTPHeaderField: "User-Agent") == nil {
+            request.setValue(OMGUserAgent(), forHTTPHeaderField: "User-Agent")
         }
 
         return URLDataPromise.go(request) { completionHandler in
-            let task = session.dataTaskWithRequest(request, completionHandler: completionHandler)
+            let task = session.dataTask(with: request, completionHandler: completionHandler)
             task.resume()
         }
     } catch {
-        return URLDataPromise(error: error)
+        return URLDataPromise{ $1(error) }
     }
 }
