@@ -75,19 +75,11 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
 
         when(fulfilled: generator, concurrently: 3)
             .catch { error in
-                guard let error = error as? Error else {
+                guard let error = error as? LocalError else {
                     return
                 }
 
-                guard case .when(let errorIndex, let internalError) = error else {
-                    return
-                }
-
-                guard let localInternalError = internalError as? LocalError else {
-                    return
-                }
-
-                guard errorIndex == expectedErrorIndex && localInternalError == expectedError else {
+                guard case .DivisionByZero = error else {
                     return
                 }
 
@@ -127,7 +119,7 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
                 }
         }
 
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 3)
     }
 
     func testWhenConcurrencyLessThanZero() {
@@ -144,5 +136,34 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
         guard let e2 = p2.error else { return XCTFail() }
         guard case Error.whenConcurrentlyZero = e1 else { return XCTFail() }
         guard case Error.whenConcurrentlyZero = e2 else { return XCTFail() }
+    }
+
+    func testStopsDequeueingOnceRejected() {
+        let ex = expectation(description: "")
+        enum Error: ErrorProtocol { case dummy }
+
+        var x: UInt = 0
+        let generator = AnyIterator<Promise<Void>> {
+            x += 1
+            switch x {
+            case 0:
+                fatalError()
+            case 1:
+                return Promise.fulfilled()
+            case 2:
+                return Promise.resolved(error: Error.dummy)
+            case _:
+                XCTFail()
+                return nil
+            }
+        }
+
+        when(fulfilled: generator, concurrently: 1).then {
+            XCTFail("\($0)")
+        }.catch { error in
+            ex.fulfill()
+        }
+
+        waitForExpectations(timeout: 3)
     }
 }

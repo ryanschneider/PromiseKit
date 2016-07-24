@@ -146,9 +146,7 @@ class WhenTests: XCTestCase {
         let p1 = Promise<Void>.resolved(error: Error.test)
         let p2 = after(interval: 0.1)
         when(fulfilled: p1, p2).then{ XCTFail() }.catch { error in
-            if case PromiseKit.Error.when(let index, let underlyingError) = error {
-                XCTAssertEqual(index, 0)
-                XCTAssertEqual(underlyingError as? Error, Error.test)
+            if case Error.test = error {
                 ex.fulfill()
             }
         }
@@ -175,10 +173,11 @@ class WhenTests: XCTestCase {
         let p3 = after(interval: 0.2).then { throw Error.straggler }
 
         when(fulfilled: p1, p2, p3).catch { error -> Void in
-            if case PromiseKit.Error.when(let index, let underlyingError) = error {
-                XCTAssertEqual(index, 0)
-                XCTAssertEqual(underlyingError as? Error, Error.test)
+            switch error {
+            case Error.test:
                 ex1.fulfill()
+            default:
+                XCTFail()
             }
         }
 
@@ -201,13 +200,13 @@ class WhenTests: XCTestCase {
         let p3 = Promise<Void>.resolved(error: Error.test3)
 
         when(fulfilled: p1, p2, p3).catch { error in
-            if case PromiseKit.Error.when(0, Error.test1) = error {
+            if case Error.test1 = error {
                 ex.fulfill()
             } else {
                 XCTFail()
             }
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 }
