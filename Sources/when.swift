@@ -123,7 +123,7 @@ public func when<U, V, X>(fulfilled pu: Promise<U>, _ pv: Promise<V>, _ px: Prom
 public func when<T, PromiseIterator: IteratorProtocol where PromiseIterator.Element == Promise<T> >(fulfilled promiseIterator: PromiseIterator, concurrently: Int) -> Promise<[T]> {
 
     guard concurrently > 0 else {
-        return Promise.resolved(error: Error.whenConcurrentlyZero)
+        return Promise.resolved(error: PMKError.whenConcurrentlyZero)
     }
 
     var generator = promiseIterator

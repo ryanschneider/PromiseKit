@@ -45,9 +45,9 @@ public class URLDataPromise: Promise<Data> {
     private var URLRequest: Foundation.URLRequest!
     private var URLResponse: Foundation.URLResponse!
 
-    public class func go(_ request: URLRequest, body: @noescape ((Data?, URLResponse?, NSError?) -> Void) -> Void) -> URLDataPromise {
+    public class func go(_ request: URLRequest, body: @noescape ((Data?, URLResponse?, Error?) -> Void) -> Void) -> URLDataPromise {
         var fulfill: ((Data) -> Void)!
-        var reject: ((ErrorProtocol) -> Void)!
+        var reject: ((Error) -> Void)!
 
         let promise = URLDataPromise { fulfill = $0; reject = $1 }
 

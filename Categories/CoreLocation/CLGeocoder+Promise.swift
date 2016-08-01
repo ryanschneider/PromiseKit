@@ -39,11 +39,12 @@ extension CLGeocoder {
     }
 }
 
-extension CLError: CancellableError {
-    public var isCancelled: Bool {
-        return self == .geocodeCanceled
-    }
-}
+// Xcode 8 beta 4 doesn't import CLError as Swift.Error
+//extension CLError: CancellableError {
+//    public var isCancelled: Bool {
+//        return self == .geocodeCanceled
+//    }
+//}
 
 public class PlacemarkPromise: Promise<CLPlacemark> {
 
@@ -53,7 +54,7 @@ public class PlacemarkPromise: Promise<CLPlacemark> {
 
     private var placemarks: [CLPlacemark]!
 
-    private class func go(_ body: @noescape (([CLPlacemark]?, NSError?) -> Void) -> Void) -> PlacemarkPromise {
+    private class func go(_ body: @noescape (([CLPlacemark]?, Error?) -> Void) -> Void) -> PlacemarkPromise {
         var promise: PlacemarkPromise!
         promise = PlacemarkPromise { fulfill, reject in
             body { placemarks, error in

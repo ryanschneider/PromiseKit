@@ -9,9 +9,9 @@ enum Seal<T> {
 
 enum Resolution<T> {
     case fulfilled(T)
-    case rejected(ErrorProtocol, ErrorConsumptionToken)
+    case rejected(Error, ErrorConsumptionToken)
 
-    init(_ error: ErrorProtocol) {
+    init(_ error: Error) {
         self = .rejected(error, ErrorConsumptionToken(error))
     }
 }
@@ -57,7 +57,7 @@ class State<T> {
         }
     }
 
-    final func `catch`(on q: DispatchQueue, policy: CatchPolicy, else resolve: (Resolution<T>) -> Void, execute body: (ErrorProtocol) throws -> Void) {
+    final func `catch`(on q: DispatchQueue, policy: CatchPolicy, else resolve: (Resolution<T>) -> Void, execute body: (Error) throws -> Void) {
         pipe { resolution in
             switch (resolution, policy) {
             case (.fulfilled, _):

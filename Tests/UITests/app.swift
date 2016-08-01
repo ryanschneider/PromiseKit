@@ -5,12 +5,12 @@ import UIKit
 @UIApplicationMain
 class App: UITableViewController, UIApplicationDelegate {
 
-    var window: UIWindow? = UIWindow(frame: UIScreen.main().bounds)
+    var window: UIWindow? = UIWindow(frame: UIScreen.main.bounds)
     let testSuceededSwitch = UISwitch()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) -> Bool {
         window!.rootViewController = self
-        window!.backgroundColor = UIColor.purple()
+        window!.backgroundColor = UIColor.purple
         window!.makeKeyAndVisible()
         UIView.setAnimationsEnabled(false)
         return true

@@ -60,11 +60,9 @@ private class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     }
 
     @objc func locationManager(_ manager: CLLocationManager, didFailWithError error: NSError) {
-        switch error {
-        case let error as CLError where error == .locationUnknown:
+        if error.code == CLError.locationUnknown.rawValue && error.domain == kCLErrorDomain {
             // Apple docs say you should just ignore this error
-            break
-        default:
+        } else {
             reject(error)
             CLLocationManager.promiseDoneForLocationManager(manager)
         }
@@ -117,7 +115,7 @@ private func auther(_ requestAuthorizationType: CLLocationManager.RequestAuthori
     //PMKiOS7 guard #available(iOS 8, *) else { return }
     return { manager in
         func hasInfoPlistKey(_ key: String) -> Bool {
-            let value = Bundle.main.objectForInfoDictionaryKey(key) as? String ?? ""
+            let value = Bundle.main.object(forInfoDictionaryKey: key) as? String ?? ""
             return !value.isEmpty
         }
 
@@ -159,9 +157,9 @@ public class LocationPromise: Promise<CLLocation> {
         return parentPromise
     }
 
-    private class func foo() -> (LocationPromise, ([CLLocation]) -> Void, (ErrorProtocol) -> Void) {
+    private class func foo() -> (LocationPromise, ([CLLocation]) -> Void, (Error) -> Void) {
         var fulfill: ((CLLocation) -> Void)!
-        var reject: ((ErrorProtocol) -> Void)!
+        var reject: ((Error) -> Void)!
         let promise = LocationPromise { fulfill = $0; reject = $1 }
 
         promise.parentPromise.then(on: zalgo) { fulfill($0.last!) }

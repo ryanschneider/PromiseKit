@@ -1,7 +1,7 @@
 import PromiseKit
 import XCTest
 
-var InjectedErrorUnhandler: (ErrorProtocol) -> Void = { _ in XCTFail() }
+var InjectedErrorUnhandler: (Error) -> Void = { _ in XCTFail() }
 
 @objc(PMKInjected) class Injected: NSObject {
     @objc class func setErrorUnhandler(_ newErrorUnhandler: (NSError) -> Void) {

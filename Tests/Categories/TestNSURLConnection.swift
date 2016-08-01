@@ -11,8 +11,8 @@ class Test_NSURLConnection_Swift: XCTestCase {
     func test1() {
         let json = ["key1": "value1", "key2": ["value2A", "value2B"]]
 
-        OHHTTPStubs.stubRequestsPassingTest({ Bool($0.URL!.host == "example.com") }) { _ in
-            return OHHTTPStubsResponse(JSONObject: json, statusCode: 200, headers: nil)
+        OHHTTPStubs.stubRequests(passingTest: { $0.url!.host == "example.com" }) { _ in
+            return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
         }
 
         let ex = expectation(description: "")

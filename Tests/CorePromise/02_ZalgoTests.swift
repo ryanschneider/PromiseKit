@@ -35,7 +35,7 @@ class ZalgoTests: XCTestCase {
 
             InjectedErrorUnhandler = { err in
                 ex.1.fulfill()
-                guard case Error.returnedSelf = err else { return XCTFail() }
+                guard case PMKError.returnedSelf = err else { return XCTFail() }
             }
 
             var p1: Promise<Void>!

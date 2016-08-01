@@ -1,6 +1,6 @@
 import Foundation
 
-public enum Error: ErrorProtocol {
+public enum PMKError: Error {
     /**
      The ErrorType for a rejected `join`.
      - Parameter 0: The promises passed to this `join` that did not *all* fulfill.
@@ -27,7 +27,7 @@ public enum Error: ErrorProtocol {
     case castError(Any.Type)
 }
 
-public enum URLError: ErrorProtocol {
+public enum URLError: Error {
     /**
      The URLRequest succeeded but a valid UIImage could not be decoded from
      the data that was received.
@@ -69,7 +69,7 @@ public enum URLError: ErrorProtocol {
     }
 }
 
-public enum JSONError: ErrorProtocol {
+public enum JSONError: Error {
     case unexpectedRootNode(AnyObject)
 }
 
@@ -105,15 +105,15 @@ extension NSError {
     }
 
     @objc public var isCancelled: Bool {
-        return (self as ErrorProtocol).isCancelledError
+        return (self as Error).isCancelledError
     }
 }
 
-public protocol CancellableError: ErrorProtocol {
+public protocol CancellableError: Error {
     var isCancelled: Bool { get }
 }
 
-extension ErrorProtocol {
+extension Error {
     public var isCancelledError: Bool {
         if let ce = self as? CancellableError {
             return ce.isCancelled
@@ -135,9 +135,9 @@ private var cancelledErrorIdentifiers = Set([
 //////////////////////////////////////////////////////// Unhandled Errors
 class ErrorConsumptionToken {
     var consumed = false
-    let error: ErrorProtocol
+    let error: Error
 
-    init(_ error: ErrorProtocol) {
+    init(_ error: Error) {
         self.error = error
     }
 

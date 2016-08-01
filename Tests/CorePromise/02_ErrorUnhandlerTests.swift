@@ -83,7 +83,7 @@ class ErrorUnhandlerTests: XCTestCase {
     }
 
     func testDoubleRejectDoesNotTriggerUnhandler() {
-        enum Error: ErrorProtocol {
+        enum Error: Swift.Error {
             case test
         }
 
@@ -115,7 +115,7 @@ class ErrorUnhandlerTests: XCTestCase {
             ex.fulfill()
         }
 
-        enum Error: ErrorProtocol {
+        enum Error: Swift.Error {
             case test
         }
 
@@ -129,7 +129,7 @@ class ErrorUnhandlerTests: XCTestCase {
     }
 
     func testConsumedPromiseStaysConsumedAsAnyPromise() {
-        enum Error: ErrorProtocol {
+        enum Error: Swift.Error {
             case test
         }
 
@@ -180,6 +180,6 @@ class ErrorUnhandlerTests: XCTestCase {
 
 }
 
-private enum Error: ErrorProtocol {
+private enum Error: Swift.Error {
     case dummy
 }

@@ -202,6 +202,6 @@ class BridgingTests: XCTestCase {
     }
 }
 
-private enum Error: ErrorProtocol {
+private enum Error: Swift.Error {
     case dummy
 }

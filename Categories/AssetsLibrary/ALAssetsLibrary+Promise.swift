@@ -32,7 +32,7 @@ extension UIViewController {
             return Promise { fulfill, reject in
                 ALAssetsLibrary().asset(for: url, resultBlock: { asset in
                     let N = Int(asset!.defaultRepresentation().size())
-                    let bytes = UnsafeMutablePointer<UInt8>(allocatingCapacity: N)
+                    let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: N)
                     var error: NSError?
                     asset!.defaultRepresentation().getBytes(bytes, fromOffset: 0, length: N, error: &error)
 

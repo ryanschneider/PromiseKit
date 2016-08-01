@@ -50,7 +50,7 @@ extension NSURLConnection {
     }
 
     public class func PATCH(URL: String, JSON: NSDictionary) -> URLDataPromise {
-        return go(try OMGHTTPURLRQ.PATCH(URL, JSON: JSON))
+        return go(try OMGHTTPURLRQ.patch(URL, json: JSON) as URLRequest)
     }
 
     public class func promise(_ request: URLRequest) -> URLDataPromise {

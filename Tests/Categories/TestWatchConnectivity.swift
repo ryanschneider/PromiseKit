@@ -12,7 +12,7 @@ class Test_WatchConnectivity_Swift: XCTestCase {
 
         var fail = false
 
-        override func sendMessage(_ message: [String : AnyObject], replyHandler: (([String : AnyObject]) -> Void)?, errorHandler: ((NSError) -> Void)?) {
+        override func sendMessage(_ message: [String : AnyObject], replyHandler: (([String : AnyObject]) -> Void)?, errorHandler: ((Error) -> Void)?) {
             if fail {
                 errorHandler?(NSError(domain: "Test", code: 1, userInfo: [:]))
             } else {
@@ -37,7 +37,7 @@ class Test_WatchConnectivity_Swift: XCTestCase {
 
     func testFailure() {
         class MockFailSession: WCSession {
-            private override func sendMessage(_ message: [String : AnyObject], replyHandler: (([String : AnyObject]) -> Void)?, errorHandler: ((NSError) -> Void)?) {
+            private override func sendMessage(_ message: [String : AnyObject], replyHandler: (([String : AnyObject]) -> Void)?, errorHandler: ((Error) -> Void)?) {
                 errorHandler?(NSError(domain: "Test", code: 1, userInfo: [:]))
             }
         }

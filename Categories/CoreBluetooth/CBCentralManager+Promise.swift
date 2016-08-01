@@ -32,9 +32,9 @@ public class CentralManagerPromise: Promise<CBCentralManager> {
   
   private let (parentPromise, fulfill, reject) = Promise<CBCentralManager>.pending()
   
-  private class func deferred() -> (CentralManagerPromise, (CBCentralManager) -> Void, (ErrorProtocol) -> Void) {
+  private class func deferred() -> (CentralManagerPromise, (CBCentralManager) -> Void, (Error) -> Void) {
     var fullfill: ((CBCentralManager) -> Void)!
-    var reject: ((ErrorProtocol) -> Void)!
+    var reject: ((Error) -> Void)!
     let promise = CentralManagerPromise { fullfill = $0; reject = $1 }
     promise.parentPromise.then(on: zalgo, execute: fullfill)
     promise.parentPromise.catch(on: zalgo, execute: reject)

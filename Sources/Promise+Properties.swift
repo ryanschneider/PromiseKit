@@ -2,7 +2,7 @@ extension Promise {
     /**
      - Returns: The error with which this promise was rejected; `nil` if this promise is not rejected.
     */
-    public var error: ErrorProtocol? {
+    public var error: Error? {
         switch state.get() {
         case .none:
             return nil

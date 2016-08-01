@@ -40,6 +40,6 @@ private class SKDelegate: NSObject, SKProductsRequestDelegate {
     }
 
     @objc override class func initialize() {
-        NSError.registerCancelledErrorDomain(SKErrorDomain, code: SKErrorCode.paymentCancelled.rawValue)
+        NSError.registerCancelledErrorDomain(SKErrorDomain, code: SKError.Code.paymentCancelled.rawValue)
     }
 }

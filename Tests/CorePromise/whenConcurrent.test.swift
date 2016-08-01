@@ -47,7 +47,7 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
     }
 
     func testWhenGeneratorError() {
-        enum LocalError: ErrorProtocol {
+        enum LocalError: Error {
             case Unknown
             case DivisionByZero
         }
@@ -124,7 +124,7 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
 
     func testWhenConcurrencyLessThanZero() {
         InjectedErrorUnhandler = { err in
-            guard case Error.whenConcurrentlyZero = err else { return XCTFail() }
+            guard case PMKError.whenConcurrentlyZero = err else { return XCTFail() }
         }
 
         let generator = AnyIterator<Promise<Int>> { XCTFail(); return nil }
@@ -134,13 +134,13 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
 
         guard let e1 = p1.error else { return XCTFail() }
         guard let e2 = p2.error else { return XCTFail() }
-        guard case Error.whenConcurrentlyZero = e1 else { return XCTFail() }
-        guard case Error.whenConcurrentlyZero = e2 else { return XCTFail() }
+        guard case PMKError.whenConcurrentlyZero = e1 else { return XCTFail() }
+        guard case PMKError.whenConcurrentlyZero = e2 else { return XCTFail() }
     }
 
     func testStopsDequeueingOnceRejected() {
         let ex = expectation(description: "")
-        enum Error: ErrorProtocol { case dummy }
+        enum Error: Swift.Error { case dummy }
 
         var x: UInt = 0
         let generator = AnyIterator<Promise<Void>> {

@@ -40,7 +40,7 @@ extension ACAccountStore {
         return Promise<Bool>.wrap { removeAccount(account, withCompletionHandler: $0) }.asVoid()
     }
 
-    public enum Error: ErrorProtocol {
+    public enum Error: Swift.Error {
         case accessDenied
 
         public var localizedDescription: String {

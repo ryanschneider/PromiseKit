@@ -13,19 +13,15 @@ class RegressionTests: XCTestCase {
             promise2.catch(on: zalgo) { _ in XCTFail() }
         }
         do {
-            enum Error: ErrorProtocol { case dummy }
+            enum Error: Swift.Error { case dummy }
 
             let promise1 = Promise<Void>.resolved(error: Error.dummy)
             let promise2 = promise1.recover(on: zalgo) { _ in promise1 }
             promise2.catch(on: zalgo) { err in
-                if case PromiseKit.Error.returnedSelf = err {
+                if case PMKError.returnedSelf = err {
                     XCTFail()
                 }
             }
         }
     }
-}
-
-private enum Error: ErrorProtocol {
-    case Dummy
 }

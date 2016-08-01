@@ -14,7 +14,7 @@ import EventKit
     import PromiseKit
 #endif
 
-public enum EventKitError: ErrorProtocol {
+public enum EventKitError: Error {
     case restricted
     case denied
 

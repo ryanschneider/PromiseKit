@@ -1,4 +1,4 @@
-import enum Foundation.NSURLError
+import Foundation.NSURLError
 import PromiseKit
 import XCTest
 
@@ -86,7 +86,7 @@ class CancellationTests: XCTestCase {
         }
 
         Promise.fulfilled().then {
-            throw NSURLError.cancelled
+            throw NSError(domain: NSURLErrorDomain, code: URLError.cancelled.rawValue)
         }.catch { _ in
             XCTFail()
         }
@@ -132,11 +132,11 @@ class CancellationTests: XCTestCase {
         XCTAssertTrue(Error.cancel.isCancelled)
         XCTAssertTrue(Error.cancel.isCancelledError)
         XCTAssertTrue((Error.cancel as NSError).isCancelled)
-        XCTAssertTrue(((Error.cancel as NSError) as ErrorProtocol).isCancelledError)
+        XCTAssertTrue(((Error.cancel as NSError) as Swift.Error).isCancelledError)
     }
 }
 
-private enum Error: ErrorProtocol, CancellableError {
+private enum Error: CancellableError {
     case dummy
     case cancel
 

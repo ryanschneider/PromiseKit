@@ -1,7 +1,7 @@
 import PromiseKit
 import XCTest
 
-enum Error: ErrorProtocol {
+enum Error: Swift.Error {
     case dummy  // we reject with this when we don't intend to test against it
     case sentinel(UInt32)
 }

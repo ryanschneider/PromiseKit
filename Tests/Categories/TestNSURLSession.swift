@@ -10,8 +10,8 @@ class Test_NSURLSession_Swift: XCTestCase {
     func test1() {
         let json = ["key1": "value1", "key2": ["value2A", "value2B"]]
 
-        OHHTTPStubs.stubRequestsPassingTest({ Bool($0.URL!.host == "example.com") }) { _ in
-            return OHHTTPStubsResponse(JSONObject: json, statusCode: 200, headers: nil)
+        OHHTTPStubs.stubRequests(passingTest: { $0.url!.host == "example.com" }) { _ in
+            return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
         }
 
         let ex = expectation(description: "")
@@ -19,7 +19,7 @@ class Test_NSURLSession_Swift: XCTestCase {
             XCTAssertEqual(json, rsp)
             ex.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 
     func test2() {
@@ -29,7 +29,7 @@ class Test_NSURLSession_Swift: XCTestCase {
 
         let dummy = ("fred" as NSString).data(using: String.Encoding.utf8.rawValue)!
 
-        OHHTTPStubs.stubRequestsPassingTest({ Bool($0.URL!.host == "example.com") }) { _ in
+        OHHTTPStubs.stubRequests(passingTest: { $0.url!.host == "example.com" }) { _ in
             return OHHTTPStubsResponse(data: dummy, statusCode: 200, headers: [:])
         }
 
@@ -39,8 +39,8 @@ class Test_NSURLSession_Swift: XCTestCase {
             URLSession.GET("http://example.com")
         }.then { x -> Void in
             XCTAssertEqual(x, dummy)
-        }.then(ex.fulfill)
+        }.then(execute: ex.fulfill)
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 }

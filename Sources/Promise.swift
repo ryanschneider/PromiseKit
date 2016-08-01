@@ -13,7 +13,7 @@ import func Foundation.NSLog
  promise, et cetera.
 
  Promises start in a pending state and *resolve* with a value to become
- *fulfilled* or an `ErrorProtocol` to become rejected.
+ *fulfilled* or an `Error` to become rejected.
 
  - SeeAlso: [PromiseKit `then` Guide](http://promisekit.org/docs/)
 */
@@ -60,7 +60,7 @@ public class Promise<T> {
      - SeeAlso: http://promisekit.org/docs/cookbook/wrapping-delegation/
      - SeeAlso: pending()
     */
-    required public init(resolvers: @noescape (fulfill: (T) -> Void, reject: (ErrorProtocol) -> Void) throws -> Void) {
+    required public init(resolvers: @noescape (fulfill: (T) -> Void, reject: (Error) -> Void) throws -> Void) {
         var resolve: ((Resolution<T>) -> Void)!
         do {
             state = UnsealedState(resolver: &resolve)
@@ -102,7 +102,7 @@ public class Promise<T> {
     /**
      Create an already rejected promise.
      */
-    public class func resolved(error: ErrorProtocol) -> Promise {
+    public class func resolved(error: Error) -> Promise {
         return Promise(seal: Resolution(error))
     }
 
@@ -126,7 +126,7 @@ public class Promise<T> {
 
      - SeeAlso: pending()
      */
-    public typealias PendingTuple = (promise: Promise, fulfill: (T) -> Void, reject: (ErrorProtocol) -> Void)
+    public typealias PendingTuple = (promise: Promise, fulfill: (T) -> Void, reject: (Error) -> Void)
 
     /**
      Making promises that wrap asynchronous delegation systems or other larger asynchronous systems without a simple completion handler is easier with pending.
@@ -150,7 +150,7 @@ public class Promise<T> {
     */
     public class func pending() -> PendingTuple {
         var fulfill: ((T) -> Void)!
-        var reject: ((ErrorProtocol) -> Void)!
+        var reject: ((Error) -> Void)!
         let promise = self.init { fulfill = $0; reject = $1 }
         return (promise, fulfill, reject)
     }
@@ -196,7 +196,7 @@ public class Promise<T> {
         rv = Promise<U> { resolve in
             state.then(on: q, else: resolve) { value in
                 let promise = try body(value)
-                guard promise !== rv else { throw Error.returnedSelf }
+                guard promise !== rv else { throw PMKError.returnedSelf }
                 promise.state.pipe(resolve)
             }
         }
@@ -217,7 +217,7 @@ public class Promise<T> {
      - Parameter policy: The default policy does not execute your handler for cancellation errors. See `registerCancellationError` for more documentation.
      - Parameter body: The handler to execute if this promise is rejected.
     */
-    public func `catch`(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (ErrorProtocol) -> Void) {
+    public func `catch`(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (Error) -> Void) {
         state.catch(on: q, policy: policy, else: { _ in }, execute: body)
     }
 
@@ -225,19 +225,19 @@ public class Promise<T> {
      The provided closure is executed when this promise is rejected giving you
      an opportunity to recover from the error and continue the promise chain.
     */
-    public func recover(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (ErrorProtocol) throws -> Promise) -> Promise {
+    public func recover(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (Error) throws -> Promise) -> Promise {
         var rv: Promise!
         rv = Promise { resolve in
             state.catch(on: q, policy: policy, else: resolve) { error in
                 let promise = try body(error)
-                guard promise !== rv else { throw Error.returnedSelf }
+                guard promise !== rv else { throw PMKError.returnedSelf }
                 promise.state.pipe(resolve)
             }
         }
         return rv
     }
 
-    public func recover(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (ErrorProtocol) throws -> T) -> Promise {
+    public func recover(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (Error) throws -> T) -> Promise {
         return Promise { resolve in
             state.catch(on: q, policy: policy, else: resolve) { error in
                 resolve(.fulfilled(try body(error)))
@@ -308,48 +308,48 @@ public class Promise<T> {
     public convenience init() { fatalError() }
 
     @available (*, unavailable, renamed: "resolved(error:)")
-    public convenience init(error: ErrorProtocol) { fatalError() }
+    public convenience init(error: Error) { fatalError() }
 
     @available(*, unavailable, message: "deprecated: use then(on: DispatchQueue.global())")
     public func thenInBackground<U>(execute body: (T) throws -> U) -> Promise<U> { fatalError() }
 
     @available(*, unavailable, renamed: "catch")
-    public func onError(policy: CatchPolicy = .allErrors, execute body: (ErrorProtocol) -> Void) { fatalError() }
+    public func onError(policy: CatchPolicy = .allErrors, execute body: (Error) -> Void) { fatalError() }
 
     @available(*, unavailable, renamed: "catch")
-    public func errorOnQueue(_ on: DispatchQueue, policy: CatchPolicy = .allErrors, execute body: (ErrorProtocol) -> Void) { fatalError() }
+    public func errorOnQueue(_ on: DispatchQueue, policy: CatchPolicy = .allErrors, execute body: (Error) -> Void) { fatalError() }
 
     @available(*, unavailable, renamed: "catch")
-    public func error(policy: CatchPolicy, execute body: (ErrorProtocol) -> Void) { fatalError() }
+    public func error(policy: CatchPolicy, execute body: (Error) -> Void) { fatalError() }
 
     @available(*, unavailable, renamed: "catch")
-    public func report(policy: CatchPolicy = .allErrors, execute body: (ErrorProtocol) -> Void) { fatalError() }
+    public func report(policy: CatchPolicy = .allErrors, execute body: (Error) -> Void) { fatalError() }
 
-//MARK: disallow `Promise<ErrorProtocol>`
+//MARK: disallow `Promise<Error>`
 
-    @available(*, unavailable, message: "cannot instantiate Promise<ErrorProtocol>")
-    public init<T: ErrorProtocol>(resolvers: @noescape (fulfill: (T) -> Void, reject: (ErrorProtocol) -> Void) throws -> Void) { fatalError() }
+    @available(*, unavailable, message: "cannot instantiate Promise<Error>")
+    public init<T: Error>(resolvers: @noescape (fulfill: (T) -> Void, reject: (Error) -> Void) throws -> Void) { fatalError() }
 
 
-    @available(*, unavailable, message: "cannot instantiate Promise<ErrorProtocol>")
-    public convenience init<T: ErrorProtocol>(resolvers: @noescape ((T) -> Void, (ErrorProtocol) -> Void) throws -> Void) { fatalError() }
+    @available(*, unavailable, message: "cannot instantiate Promise<Error>")
+    public convenience init<T: Error>(resolvers: @noescape ((T) -> Void, (Error) -> Void) throws -> Void) { fatalError() }
 
-    @available(*, unavailable, message: "cannot instantiate Promise<ErrorProtocol>")
-    public class func wrap(resolver: @noescape ((T?, NSError?) -> Void) throws -> Void) -> Promise<ErrorProtocol> { fatalError() }
+    @available(*, unavailable, message: "cannot instantiate Promise<Error>")
+    public class func wrap(resolver: @noescape ((T?, NSError?) -> Void) throws -> Void) -> Promise<Error> { fatalError() }
 
-    @available(*, unavailable, message: "cannot instantiate Promise<ErrorProtocol>")
-    public class func wrap(resolver: @noescape ((T, NSError?) -> Void) throws -> Void) -> Promise<ErrorProtocol> { fatalError() }
+    @available(*, unavailable, message: "cannot instantiate Promise<Error>")
+    public class func wrap(resolver: @noescape ((T, NSError?) -> Void) throws -> Void) -> Promise<Error> { fatalError() }
 
-    @available(*, unavailable, message: "cannot instantiate Promise<ErrorProtocol>")
-    public class func pending<T: ErrorProtocol>() -> (promise: Promise, fulfill: (T) -> Void, reject: (ErrorProtocol) -> Void) { fatalError() }
+    @available(*, unavailable, message: "cannot instantiate Promise<Error>")
+    public class func pending<T: Error>() -> (promise: Promise, fulfill: (T) -> Void, reject: (Error) -> Void) { fatalError() }
 
-//MARK: disallow returning `ErrorProtocol`
+//MARK: disallow returning `Error`
 
     @available (*, unavailable, message: "instead of returning the error; throw")
-    public func then<U: ErrorProtocol>(on: DispatchQueue = PMKDefaultDispatchQueue(), execute body: (T) throws -> U) -> Promise<U> { fatalError() }
+    public func then<U: Error>(on: DispatchQueue = PMKDefaultDispatchQueue(), execute body: (T) throws -> U) -> Promise<U> { fatalError() }
 
     @available (*, unavailable, message: "instead of returning the error; throw")
-    public func recover<T: ErrorProtocol>(on: DispatchQueue = PMKDefaultDispatchQueue(), execute body: (ErrorProtocol) throws -> T) -> Promise { fatalError() }
+    public func recover<T: Error>(on: DispatchQueue = PMKDefaultDispatchQueue(), execute body: (Error) throws -> T) -> Promise { fatalError() }
 
 //MARK: disallow returning `Promise?`
 
@@ -357,7 +357,7 @@ public class Promise<T> {
     public func then<U>(on: DispatchQueue = PMKDefaultDispatchQueue(), execute body: (T) throws -> Promise<U>?) -> Promise<U> { fatalError() }
 
     @available(*, unavailable, message: "unwrap the promise")
-    public func recover(on: DispatchQueue = PMKDefaultDispatchQueue(), execute body: (ErrorProtocol) throws -> Promise?) -> Promise { fatalError() }
+    public func recover(on: DispatchQueue = PMKDefaultDispatchQueue(), execute body: (Error) throws -> Promise?) -> Promise { fatalError() }
 }
 
 extension Promise: CustomStringConvertible {
@@ -396,7 +396,7 @@ public func firstly<T>(execute body: @noescape () throws -> Promise<T>) -> Promi
 }
 
 @available(*, unavailable, message: "instead of returning the error; throw")
-public func firstly<T: ErrorProtocol>(execute body: @noescape () throws -> T) -> Promise<T> { fatalError() }
+public func firstly<T: Error>(execute body: @noescape () throws -> T) -> Promise<T> { fatalError() }
 
 @available(*, unavailable, message: "use DispatchQueue.promise")
 public func firstly<T>(on: DispatchQueue, execute body: @noescape () throws -> Promise<T>) -> Promise<T> { fatalError() }
@@ -413,7 +413,7 @@ public func dispatch_promise<T>(_ on: DispatchQueue, _ body: () throws -> T) -> 
 */
 public enum Result<T> {
     case fulfilled(T)
-    case rejected(ErrorProtocol)
+    case rejected(Error)
 
     init(_ resolution: Resolution<T>) {
         switch resolution {

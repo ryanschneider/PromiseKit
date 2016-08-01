@@ -19,7 +19,7 @@ import PromiseKit
     import PromiseKit
 */
 extension Task {
-    public enum Error: ErrorProtocol {
+    public enum Error: Swift.Error {
         case encoding(stdout: Data, stderr: Data)
         case execution(task: Task, stdout: Data, stderr: Data)
 

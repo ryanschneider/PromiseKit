@@ -126,17 +126,17 @@ import Foundation
     }
 
     /// - See: `Promise.recover()`
-    public func recover(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (ErrorProtocol) throws -> Promise<AnyObject?>) -> Promise<AnyObject?> {
+    public func recover(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (Error) throws -> Promise<AnyObject?>) -> Promise<AnyObject?> {
         return asPromise().recover(on: q, policy: policy, execute: body)
     }
 
     /// - See: `Promise.recover()`
-    public func recover(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (ErrorProtocol) throws -> AnyObject?) -> Promise<AnyObject?> {
+    public func recover(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (Error) throws -> AnyObject?) -> Promise<AnyObject?> {
         return asPromise().recover(on: q, policy: policy, execute: body)
     }
 
     /// - See: `Promise.catch()`
-    public func `catch`(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (ErrorProtocol) -> Void) {
+    public func `catch`(on q: DispatchQueue = PMKDefaultDispatchQueue(), policy: CatchPolicy = .allErrorsExceptCancellation, execute body: (Error) -> Void) {
         state.catch(on: q, policy: policy, else: { _ in }, execute: body)
     }
 
@@ -273,7 +273,7 @@ import Foundation
             if let value = value as? T {
                 return value
             }
-            throw Error.castError(type)
+            throw PMKError.castError(type)
         }
     }
 

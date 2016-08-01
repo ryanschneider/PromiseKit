@@ -23,7 +23,7 @@ class Test_SKProductsRequest_Swift: XCTestCase {
         class MockProductsRequest: SKProductsRequest {
             override func start() {
                 after(interval: 0.1).then { _ -> Void in
-                    let err = NSError(domain: SKErrorDomain, code: SKErrorCode.paymentCancelled.rawValue, userInfo: nil)
+                    let err = NSError(domain: SKErrorDomain, code: SKError.Code.paymentCancelled.rawValue, userInfo: nil)
                     self.delegate?.request?(self, didFailWithError: err)
                 }
             }

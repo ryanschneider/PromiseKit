@@ -5,7 +5,7 @@ import Foundation.NSError
 import PromiseKit
 #endif
 
-public enum AddressBookError: ErrorProtocol {
+public enum AddressBookError: Error {
     case notDetermined
     case restricted
     case denied

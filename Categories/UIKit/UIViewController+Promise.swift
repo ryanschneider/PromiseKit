@@ -21,7 +21,7 @@ import PromiseKit
 */
 extension UIViewController {
 
-    public enum Error: ErrorProtocol {
+    public enum Error: Swift.Error {
         case navigationControllerEmpty
         case noImageFound
         case notPromisable
@@ -34,22 +34,22 @@ extension UIViewController {
         case beforeDismissal
     }
 
-    public struct AnimationOptions: OptionSetType {
+    public struct AnimationOptions: OptionSet {
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
         public let rawValue: Int
-        static let None      = AnimationOptions(rawValue: 0)
-        static let Appear    = AnimationOptions(rawValue: 1 << 0)
-        static let Disappear = AnimationOptions(rawValue: 1 << 1)
+        static let none      = AnimationOptions(rawValue: 0)
+        static let appear    = AnimationOptions(rawValue: 1 << 0)
+        static let disappear = AnimationOptions(rawValue: 1 << 1)
     }
     
-    public func promise<T>(_ vc: UIViewController, animate animationOptions: AnimationOptions = [.Appear, .Disappear], fulfills: FulfillmentType = .OnceDisappeared, completion: (() -> Void)? = nil) -> Promise<T> {
+    public func promise<T>(_ vc: UIViewController, animate animationOptions: AnimationOptions = [.appear, .disappear], fulfills: FulfillmentType = .onceDisappeared, completion: (() -> Void)? = nil) -> Promise<T> {
         let pvc: UIViewController
 
         switch vc {
         case let nc as UINavigationController:
-            guard let vc = nc.viewControllers.first else { return Promise(error: Error.NavigationControllerEmpty) }
+            guard let vc = nc.viewControllers.first else { return Promise.resolved(error: Error.navigationControllerEmpty) }
             pvc = vc
         default:
             pvc = vc
@@ -57,30 +57,43 @@ extension UIViewController {
 
         let promise: Promise<T>
 
-        if !pvc.conformsToProtocol(Promisable) {
-            promise = Promise(error: UIViewController.Error.NotPromisable)
-        } else if let p = pvc.valueForKeyPath("promise") as? Promise<T> {
+        if !(pvc is Promisable) {
+            promise = Promise.resolved(error: Error.notPromisable)
+        } else if let p = pvc.value(forKeyPath: "promise") as? Promise<T> {
             promise = p
-        } else if let _: AnyObject = pvc.valueForKeyPath("promise") {
-            promise = Promise(error: UIViewController.Error.NotGenericallyPromisable)
+        } else if let _: AnyObject = pvc.value(forKeyPath: "promise") {
+            promise = Promise.resolved(error: Error.notGenericallyPromisable)
         } else {
-            promise = Promise(error: UIViewController.Error.NilPromisable)
+            promise = Promise.resolved(error: Error.nilPromisable)
         }
 
-        if promise.pending {
-            presentViewController(vc, animated: animationOptions.contains(.Appear), completion: completion)
+        if promise.isPending {
+            present(vc, animated: animationOptions.contains(.appear), completion: completion)
             promise.always {
-                vc.presentingViewController?.dismissViewControllerAnimated(animationOptions.contains(.Disappear), completion: nil)
+                vc.presentingViewController?.dismiss(animated: animationOptions.contains(.disappear), completion: nil)
             }
         }
+
+        return promise
     }
 
-    @available(*, deprecated=3.4, renamed="promiseViewController(_:animate:fulfills:completion:)")
-    public func promiseViewController<T>(vc: UIViewController, animated: Bool = true, completion: (() -> Void)? = nil) -> Promise<T> {
-        return promiseViewController(vc, animate: [.Appear, .Disappear], completion: completion)
+    @available(*, deprecated: 3.4, renamed: "promise(_:animate:fulfills:completion:)")
+    public func promiseViewController<T>(_ vc: UIViewController, animated: Bool = true, completion: (() -> Void)? = nil) -> Promise<T> {
+        return promise(vc, animate: animated ? [.appear, .disappear] : [], completion: completion)
     }
-  
+
+    @available(*, deprecated: 3.4, renamed: "promise(_:animate:fulfills:completion:)")
     public func promiseViewController(_ vc: UIImagePickerController, animated: Bool = true, completion: (() -> Void)? = nil) -> Promise<UIImage> {
+        return promise(vc, animate: animated ? [.appear, .disappear] : [], completion: completion)
+    }
+
+    @available(*, deprecated: 3.4, renamed: "promise(_:animate:fulfills:completion:)")
+    public func promiseViewController(_ vc: UIImagePickerController, animated: Bool = true, completion: (() -> Void)? = nil) -> Promise<[String: AnyObject]> {
+        return promise(vc, animate: animated ? [.appear, .disappear] : [], completion: completion)
+    }
+
+    public func promise(_ vc: UIImagePickerController, animate: AnimationOptions = [.appear, .disappear], completion: (() -> Void)? = nil) -> Promise<UIImage> {
+        let animated = animate.contains(.appear)
         let proxy = UIImagePickerControllerProxy()
         vc.delegate = proxy
         vc.mediaTypes = ["public.image"]  // this promise can only resolve with a UIImage
@@ -98,7 +111,8 @@ extension UIViewController {
         }
     }
 
-    public func promiseViewController(_ vc: UIImagePickerController, animated: Bool = true, completion: (() -> Void)? = nil) -> Promise<[String: AnyObject]> {
+    public func promise(_ vc: UIImagePickerController, animate: AnimationOptions = [.appear, .disappear], completion: (() -> Void)? = nil) -> Promise<[String: AnyObject]> {
+        let animated = animate.contains(.appear)
         let proxy = UIImagePickerControllerProxy()
         vc.delegate = proxy
         present(vc, animated: animated, completion: completion)

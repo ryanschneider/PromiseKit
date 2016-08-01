@@ -5,15 +5,15 @@ import UIKit
 class UIKitTestCase: XCTestCase {
 
     var rootvc: UIViewController {
-        return UIApplication.shared().keyWindow!.rootViewController!
+        return UIApplication.shared.keyWindow!.rootViewController!
     }
 
     override func setUp() {
-        UIApplication.shared().keyWindow!.rootViewController = UIViewController()
+        UIApplication.shared.keyWindow!.rootViewController = UIViewController()
     }
 
     override func tearDown() {
-        UIApplication.shared().keyWindow!.rootViewController = nil
+        UIApplication.shared.keyWindow!.rootViewController = nil
     }
 }
 #endif

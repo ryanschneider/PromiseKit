@@ -40,7 +40,7 @@ extension URLSession {
     }
 
     public class func PUT(_ URL: String, JSON: NSDictionary? = nil) -> URLDataPromise {
-        return start(try OMGHTTPURLRQ.PUT(URL, JSON: JSON))
+        return start(try OMGHTTPURLRQ.put(URL, json: JSON) as URLRequest)
     }
 
     public class func DELETE(_ URL: String) -> URLDataPromise {
@@ -48,7 +48,7 @@ extension URLSession {
     }
 
     public class func PATCH(URL: String, JSON: NSDictionary) -> URLDataPromise {
-        return start(try OMGHTTPURLRQ.PATCH(URL, JSON: JSON))
+        return start(try OMGHTTPURLRQ.patch(URL, json: JSON) as URLRequest)
     }
 
     public func promise(_ request: URLRequest) -> URLDataPromise {

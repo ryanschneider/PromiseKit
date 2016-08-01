@@ -46,7 +46,7 @@ public func join<T>(_ promises: [Promise<T>]) -> Promise<[T]> {
                     countdown -= 1
                     if countdown == 0 {
                         if rejected {
-                            reject(Error.join(promises))
+                            reject(PMKError.join(promises))
                         } else {
                             fulfill(promises.map{ $0.value! })
                         }

@@ -10,7 +10,7 @@ class Test231: XCTestCase {
                     return promise
                 }
                 promise.catch { err in
-                    if case PromiseKit.Error.returnedSelf = err {
+                    if case PMKError.returnedSelf = err {
                         expectation.fulfill()
                     }
                 }
@@ -21,7 +21,7 @@ class Test231: XCTestCase {
                     return promise
                 }
                 promise.catch { err in
-                    if case PromiseKit.Error.returnedSelf = err {
+                    if case PMKError.returnedSelf = err {
                         expectation.fulfill()
                     }
                 }

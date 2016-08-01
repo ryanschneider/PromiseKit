@@ -55,7 +55,7 @@ class WhenTests: XCTestCase {
     }
     
     func testRejected() {
-        enum Error: ErrorProtocol { case dummy }
+        enum Error: Swift.Error { case dummy }
 
         let e1 = expectation(description: "")
         let p1 = after(interval: 0.1).then{ true }
@@ -134,7 +134,7 @@ class WhenTests: XCTestCase {
     }
 
     func testUnhandledErrorHandlerDoesNotFire() {
-        enum Error: ErrorProtocol {
+        enum Error: Swift.Error {
             case test
         }
 
@@ -155,7 +155,7 @@ class WhenTests: XCTestCase {
     }
 
     func testUnhandledErrorHandlerDoesNotFireForStragglers() {
-        enum Error: ErrorProtocol {
+        enum Error: Swift.Error {
             case test
             case straggler
         }
@@ -188,7 +188,7 @@ class WhenTests: XCTestCase {
     }
 
     func testAllSealedRejectedFirstOneRejects() {
-        enum Error: ErrorProtocol {
+        enum Error: Swift.Error {
             case test1
             case test2
             case test3

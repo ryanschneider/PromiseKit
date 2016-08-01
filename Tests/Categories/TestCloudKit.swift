@@ -12,7 +12,7 @@ class Test_CKContainer_Swift: XCTestCase {
             init(_: Bool = false)
             {}
 
-            private override func accountStatus(completionHandler: (CKAccountStatus, NSError?) -> Void) {
+            private override func accountStatus(completionHandler: (CKAccountStatus, Error?) -> Void) {
                 completionHandler(.couldNotDetermine, nil)
             }
         }
@@ -67,7 +67,7 @@ class Test_CKContainer_Swift: XCTestCase {
             init(_: Bool = false)
             {}
 
-            private override func discoverAllContactUserInfos(completionHandler: ([CKDiscoveredUserInfo]?, NSError?) -> Void) {
+            private override func discoverAllContactUserInfos(completionHandler: ([CKDiscoveredUserInfo]?, Error?) -> Void) {
                 completionHandler([PMKDiscoveredUserInfo()], nil)
             }
         }
@@ -84,7 +84,7 @@ class Test_CKContainer_Swift: XCTestCase {
             init(_: Bool = false)
             {}
 
-            private override func discoverUserInfo(withEmailAddress email: String, completionHandler: (CKDiscoveredUserInfo?, NSError?) -> Void) {
+            private override func discoverUserInfo(withEmailAddress email: String, completionHandler: (CKDiscoveredUserInfo?, Error?) -> Void) {
                 completionHandler(PMKDiscoveredUserInfo(), nil)
             }
         }
@@ -101,7 +101,7 @@ class Test_CKContainer_Swift: XCTestCase {
             init(_: Bool = false)
             {}
 
-            private override func discoverUserInfo(withUserRecordID userRecordID: CKRecordID, completionHandler: (CKDiscoveredUserInfo?, NSError?) -> Void) {
+            private override func discoverUserInfo(withUserRecordID userRecordID: CKRecordID, completionHandler: (CKDiscoveredUserInfo?, Error?) -> Void) {
                 completionHandler(PMKDiscoveredUserInfo(), nil)
             }
         }
@@ -118,7 +118,7 @@ class Test_CKContainer_Swift: XCTestCase {
             init(_: Bool = false)
             {}
 
-            private override func fetchUserRecordID(completionHandler: (CKRecordID?, NSError?) -> Void) {
+            private override func fetchUserRecordID(completionHandler: (CKRecordID?, Error?) -> Void) {
                 completionHandler(dummy(), nil)
             }
         }

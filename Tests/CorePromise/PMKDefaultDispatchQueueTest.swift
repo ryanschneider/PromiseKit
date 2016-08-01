@@ -10,7 +10,7 @@ import class Foundation.Thread
 import PromiseKit
 import XCTest
 
-private enum Error: ErrorProtocol { case dummy }
+private enum Error: Swift.Error { case dummy }
 
 
 class PMKDefaultDispatchQueueTest: XCTestCase {

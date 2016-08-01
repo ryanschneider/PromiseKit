@@ -29,7 +29,7 @@ extension UIViewController {
 }
 
 extension MFMessageComposeViewController {
-    public enum Error: ErrorProtocol {
+    public enum Error: Swift.Error {
         case Cancelled
     }
 }
@@ -58,6 +58,6 @@ private class PMKMessageComposeViewControllerDelegate: NSObject, MFMessageCompos
     }
 }
 
-public enum MessageUIError: ErrorProtocol {
+public enum MessageUIError: Error {
     case failed
 }
