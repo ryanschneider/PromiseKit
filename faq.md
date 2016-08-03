@@ -44,8 +44,11 @@ Unlike most libraries we have extensive bridging support, you can use PromiseKit
 
 ## Why won’t my `then` compile?
 
-> `Cannot convert return expression of type 'Promise<_>' to return type 'AnyPromise'`
-> `Missing return in a closure expected to return 'AnyPromise'`
+You’re seeing errors like:
+
+> Cannot convert return expression of type `Promise<…>` to return type `AnyPromise`
+>
+> Missing return in a closure expected to return `AnyPromise`
 
 In Swift simple closures are inferred, so this works fine:
 
