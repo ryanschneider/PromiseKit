@@ -341,6 +341,11 @@ when(a.asVoid(), b.asVoid(), c.asVoid(), d.asVoid()).then { _ -> Void in
 We agree this is tedious, but other than specializing `when` for more parameter counts there is nothing we can do with current Swift versions.
 
 
+## What is the difference between PromiseKit and RxSwift?
+
+[https://github.com/mxcl/PromiseKit/issues/484]()
+
+
 ## My question was not answered
 
 [Please open a ticket](https://github.com/mxcl/PromiseKit/issues/new).
