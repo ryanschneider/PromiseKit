@@ -34,6 +34,18 @@ https://github.com/mxcl/PromiseKit/issues/341
 
 Your old joins won't compile, so you’ll notice this change for sure.
 
+### Unused Return Value Warning
+
+`then` will warn if you don't use the promise it returns. This is because it is typically a bug to not use the promise and indicates an unterminated promise chain.
+
+> All chains should terminate at a `catch` handler or be returned from a function that will then terminate the chain at a `catch` handler.
+
+However ocassionally it is legitimate to not terminate a chain, in such cases you can hide the warning by making it clear to the compiler that you are happy to ignore the result:
+
+```swift
+_ = foo.then{ /*…*/ }
+```
+
 ## New Features
 
 * `PMKSetDefaultDispatchHandler`
