@@ -44,10 +44,14 @@ order: 4
 <p>Minor fixes and improvements from the community.</p>
 
 <h3>PromiseKit 3.0 <small style='color:rgba(0,0,0,0.5)'>Oct 1st, 2015</small></h3>
-<p>Includes <a href="https://github.com/mxcl/PromiseKit#promisekit-3">Swift 2.0 compatibility and minor improvements</a>. With this release, the library is now in maitenance mode.</p>
+<p>In Swift 2.0 catch and defer became reserved keywords mandating we rename our functions with these names. This forced a major semantic version change on PromiseKit and thus we took the opportunity to make other minor (source compatability breaking) improvements.
+<p>Thus if you cannot afford to adapt to PromiseKit 3 but still want to use Xcode-7.0/Swift-2.0 we provide a minimal changes branch (Swift 2.2 version here) where catch and defer are renamed catch_ and defer_ and all other changes are the bare minimum to make PromiseKit 2 compile against Swift 2.
+<p>If you still are using Xcode 6 and Swift 1.2 then use PromiseKit 2.
 
 <h3>PromiseKit 2.0 <small style='color:rgba(0,0,0,0.5)'>May 14th, 2015</small></h3>
-<p>PromiseKit 2.0 is here with <a href="/PromiseKit-2.0-Released">many important and interesting additions</a>.</p>
+<p>PromiseKit 2.0 is here enabling Objective-C and Swift promises in the
+same app and <a href="/PromiseKit-2.0-Released">many other important and
+interesting additions</a></p>
 
 <h3>PromiseKit 1.5.0</h3>
 <p>Swift 1.2 support. Xcode 6.3 required.</p>

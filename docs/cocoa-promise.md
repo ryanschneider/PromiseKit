@@ -60,6 +60,9 @@ In addition, PromiseKit is designed so that promises can be provided by other th
 
 * [CocoaPods that use PromiseKit](https://cocoapods.org/?q=uses%3Apromisekit*)
 
+## Use With Carthage
+
+To use these categories with Carthage you must 
 
 ## Complete Cocoa Extensions Listing
 
