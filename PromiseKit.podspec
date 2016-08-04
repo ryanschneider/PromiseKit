@@ -34,6 +34,12 @@ Pod::Spec.new do |s|
     ss.ios.frameworks = 'AddressBook'
   end
 
+  s.subspec 'Alamofire' do |ss|
+    ss.source_files = 'Categories/Alamofire/*'
+    ss.dependency 'PromiseKit/CorePromise'
+    ss.dependency 'Alamofire', 'swift3'
+  end
+
   s.subspec 'AssetsLibrary' do |ss|
     ss.ios.source_files = 'Categories/AssetsLibrary/*'
     ss.dependency 'PromiseKit/UIKit'
