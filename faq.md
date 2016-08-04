@@ -127,7 +127,9 @@ of PromiseKit’s `dispatch_async` by setting the default queue to `zalgo`:
 PMKSetDefaultDispatchQueue(zalgo)
 ```
 
-Only do this while debugging!
+Call this function as early in your app as possible.
+
+**Only do this while debugging!**
 
 Note that if the APIs that PromiseKit wraps are asynchronous then chances are your backtrace situation will not improve. The problem is asynchronous systems, not PromiseKit itself.
 
