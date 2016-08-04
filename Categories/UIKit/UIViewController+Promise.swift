@@ -49,7 +49,7 @@ extension UIViewController {
 
         switch vc {
         case let nc as UINavigationController:
-            guard let vc = nc.viewControllers.first else { return Promise.resolved(error: Error.navigationControllerEmpty) }
+            guard let vc = nc.viewControllers.first else { return Promise(error: Error.navigationControllerEmpty) }
             pvc = vc
         default:
             pvc = vc
@@ -58,13 +58,13 @@ extension UIViewController {
         let promise: Promise<T>
 
         if !(pvc is Promisable) {
-            promise = Promise.resolved(error: Error.notPromisable)
+            promise = Promise(error: Error.notPromisable)
         } else if let p = pvc.value(forKeyPath: "promise") as? Promise<T> {
             promise = p
         } else if let _: AnyObject = pvc.value(forKeyPath: "promise") {
-            promise = Promise.resolved(error: Error.notGenericallyPromisable)
+            promise = Promise(error: Error.notGenericallyPromisable)
         } else {
-            promise = Promise.resolved(error: Error.nilPromisable)
+            promise = Promise(error: Error.nilPromisable)
         }
 
         if promise.isPending {

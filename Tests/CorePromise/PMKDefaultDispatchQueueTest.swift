@@ -26,10 +26,10 @@ class PMKDefaultDispatchQueueTest: XCTestCase {
     func testOverrodeDefaultThenQueue() {
         let ex = expectation(description: "resolving")
 
-        Promise.resolved(value: 1).then { (_) -> Promise<Void> in
+        Promise(value: 1).then { (_) -> Promise<Void> in
             ex.fulfill()
             XCTAssertFalse(Thread.isMainThread)
-            return Promise.fulfilled()
+            return Promise(value: ())
         }
 
         XCTAssertTrue(Thread.isMainThread)
@@ -40,7 +40,7 @@ class PMKDefaultDispatchQueueTest: XCTestCase {
     func testOverrodeDefaultCatchQueue() {
         let ex = expectation(description: "resolving")
 
-        Promise<Int>.resolved(error: Error.dummy).catch { _ in
+        Promise<Int>(error: Error.dummy).catch { _ in
             ex.fulfill()
             XCTAssertFalse(Thread.isMainThread)
         }
@@ -53,7 +53,7 @@ class PMKDefaultDispatchQueueTest: XCTestCase {
     func testOverrodeDefaultAlwaysQueue() {
         let ex = expectation(description: "resolving")
 
-        Promise.resolved(value: 1).always { _ in
+        Promise(value: 1).always { _ in
             ex.fulfill()
             XCTAssertFalse(Thread.isMainThread)
         }

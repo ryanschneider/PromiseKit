@@ -34,7 +34,7 @@ class ErrorUnhandlerTests: XCTestCase {
                 XCTFail()
             }
             _ = promise.recover { error -> Promise<Int> in
-                return Promise.resolved(value: 1)
+                return Promise(value: 1)
             }.always {
                 ex.fulfill()
             }
@@ -162,7 +162,7 @@ class ErrorUnhandlerTests: XCTestCase {
     private func twice(body: @noescape (Promise<Int>, XCTestExpectation) -> Void) {
         autoreleasepool {
             let ex = expectation(description: "Sealed")
-            body(Promise<Int>.resolved(error: Error.dummy), ex)
+            body(Promise<Int>(error: Error.dummy), ex)
         }
         waitForExpectations(timeout: 1)
 

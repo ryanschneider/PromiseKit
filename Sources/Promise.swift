@@ -67,30 +67,18 @@ public class Promise<T> {
         }
     }
 
-    private init(seal resolution: Resolution<T>) {
-        self.state = SealedState(resolution: resolution)
-    }
-
     /**
      Create an already fulfilled promise.
      */
-    public class func resolved(value: T) -> Promise {
-        return Promise(seal: .fulfilled(value))
-    }
-
-    /**
-      Convenience function to create a resolved void promise.
-      - Note: provided because we cannot specialize for Void promises in Swift 3, so `func resolved() -> Promise<Void>` would complain in usage that it couldn't determine T, this is a work-around since T is in the parameter list and thus Swift infers Void when called `()`.
-     */
-    public class func fulfilled(_ value: T) -> Promise {
-        return Promise(seal: .fulfilled(value))
+    public required init(value: T) {
+        self.state = SealedState(resolution: .fulfilled(value))
     }
 
     /**
      Create an already rejected promise.
      */
-    public class func resolved(error: Error) -> Promise {
-        return Promise(seal: Resolution(error))
+    public required init(error: Error) {
+        self.state = SealedState(resolution: Resolution(error))
     }
 
     /**
@@ -105,7 +93,7 @@ public class Promise<T> {
     }
 
     /**
-     A `typealias` for the return values of `pending()`. Simplifies declaration of properties that reference the values' containing tuple when this is necessary. For example, when working with multiple `pendingPromise.fulfilled()`s within the same scope, or when the promise initialization must occur outside of the caller's initialization.
+     A `typealias` for the return values of `pending()`. Simplifies declaration of properties that reference the values' containing tuple when this is necessary. For example, when working with multiple `pendingPromise(value: ())`s within the same scope, or when the promise initialization must occur outside of the caller's initialization.
 
          class Foo: BarDelegate {
             var task: Promise<Int>.PendingTuple?
@@ -324,15 +312,6 @@ public class Promise<T> {
     @available(*, unavailable, renamed: "pending()")
     public class func `pendingPromise`() -> PendingTuple { fatalError() }
 
-    @available (*, unavailable, renamed: "resolved(value:)")
-    public convenience init(_ value: T) { fatalError() }
-
-    @available (*, unavailable, renamed: "fulfilled()")
-    public convenience init() { fatalError() }
-
-    @available (*, unavailable, renamed: "resolved(error:)")
-    public convenience init(error: Error) { fatalError() }
-
     @available(*, unavailable, message: "deprecated: use then(on: DispatchQueue.global())")
     public func thenInBackground<U>(execute body: (T) throws -> U) -> Promise<U> { fatalError() }
 
@@ -414,7 +393,7 @@ public func firstly<T>(execute body: @noescape () throws -> Promise<T>) -> Promi
     do {
         return try body()
     } catch {
-        return Promise.resolved(error: error)
+        return Promise(error: error)
     }
 }
 
@@ -426,7 +405,7 @@ public func firstly<T>(on: DispatchQueue, execute body: @noescape () throws -> P
 
 @available(*, deprecated: 4.0, renamed: "DispatchQueue.promise")
 public func dispatch_promise<T>(_ on: DispatchQueue, _ body: () throws -> T) -> Promise<T> {
-    return Promise.fulfilled().then(on: on, execute: body)
+    return Promise(value: ()).then(on: on, execute: body)
 }
 
 

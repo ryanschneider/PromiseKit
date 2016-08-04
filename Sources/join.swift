@@ -25,13 +25,13 @@ public func join<T>(_ promises: Promise<T>...) -> Promise<[T]> {
 /// Waits on all provided promises.
 @available(*, deprecated: 4.0, message: "Use when(resolved:)")
 public func join(_ promises: [Promise<Void>]) -> Promise<Void> {
-    return join(promises).then(on: zalgo) { (_: [Void]) in return Promise.fulfilled() }
+    return join(promises).then(on: zalgo) { (_: [Void]) in return Promise(value: ()) }
 }
 
 /// Waits on all provided promises.
 @available(*, deprecated: 4.0, message: "Use when(resolved:)")
 public func join<T>(_ promises: [Promise<T>]) -> Promise<[T]> {
-    guard !promises.isEmpty else { return Promise.resolved(value: []) }
+    guard !promises.isEmpty else { return Promise(value: []) }
   
     var countdown = promises.count
     let barrier = DispatchQueue(label: "org.promisekit.barrier.join", attributes: .concurrent)

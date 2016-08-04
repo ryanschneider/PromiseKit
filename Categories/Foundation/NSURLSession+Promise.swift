@@ -69,6 +69,6 @@ private func start(_ body: @autoclosure () throws -> URLRequest, session: URLSes
             task.resume()
         }
     } catch {
-        return URLDataPromise{ $1(error) }
+        return URLDataPromise(error: error)
     }
 }

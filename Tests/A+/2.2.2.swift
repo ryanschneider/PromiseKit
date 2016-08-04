@@ -34,7 +34,7 @@ class Test222: XCTestCase {
             describe("2.2.2.3: it must not be called more than once.") {
                 specify("already-fulfilled") { _, expectation in
                     let ex = (expectation, mkex())
-                    Promise.fulfilled().then {
+                    Promise(value: ()).then {
                         ex.0.fulfill()
                     }
                     after(ticks: 10_000) {

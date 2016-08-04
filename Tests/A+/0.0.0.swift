@@ -50,7 +50,7 @@ extension XCTestCase {
         let specify = mkspecify(withExpectationCount, file: file, line: line, body: body)
 
         specify("already-fulfilled") { value in
-            return (Promise.resolved(value: value), {})
+            return (Promise(value: value), {})
         }
         specify("immediately-fulfilled") { value in
             let (promise, fulfill, _) = Promise<UInt32>.pending()
@@ -73,7 +73,7 @@ extension XCTestCase {
         let specify = mkspecify(withExpectationCount, file: file, line: line, body: body)
 
         specify("already-rejected") { sentinel in
-            return (Promise.resolved(error: Error.sentinel(sentinel)), {})
+            return (Promise(error: Error.sentinel(sentinel)), {})
         }
         specify("immediately-rejected") { sentinel in
             let (promise, _, reject) = Promise<UInt32>.pending()

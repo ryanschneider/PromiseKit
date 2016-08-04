@@ -70,7 +70,7 @@ private func go(_ body: @autoclosure () throws -> URLRequest) -> URLDataPromise 
             NSURLConnection.sendAsynchronousRequest(request, queue: Q, completionHandler: { completionHandler($1, $0, $2) })
         }
     } catch {
-        return URLDataPromise{ $1(error) }
+        return URLDataPromise(error: error)
     }
 }
 

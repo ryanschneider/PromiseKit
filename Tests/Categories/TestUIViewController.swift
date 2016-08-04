@@ -32,7 +32,7 @@ class Test_UIViewController_Swift: UIKitTestCase {
     func test_rejects_if_promise_property_casts_wrongly() {
         let ex = expectation(description: "")
         let my = MockViewController()
-        my.promise = Promise.resolved(value: true)
+        my.promise = Promise(value: true)
         let p: Promise<Int> = rootvc.promise(my, animate: [])
         p.catch { err in
             if case UIViewController.Error.notGenericallyPromisable = err {
@@ -45,7 +45,7 @@ class Test_UIViewController_Swift: UIKitTestCase {
     func test_resolved_promise_property_means_vc_does_not_appear() {
         let ex = expectation(description: "")
         let my = MockViewController()
-        my.promise = Promise.resolved(value: dummy)
+        my.promise = Promise(value: dummy)
         rootvc.promise(my, animate: []).then { (x: Int) -> Void in
             XCTAssertFalse(my.appeared)
             XCTAssertEqual(x, dummy)

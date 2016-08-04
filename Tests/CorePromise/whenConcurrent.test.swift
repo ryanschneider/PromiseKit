@@ -66,10 +66,10 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
 
             return after(interval: 0.01).then {
                 guard number != 0 else {
-                    return Promise.resolved(error: expectedError)
+                    return Promise(error: expectedError)
                 }
 
-                return Promise.resolved(value: 100500 / number)
+                return Promise(value: 100500 / number)
             }
         }
 
@@ -108,7 +108,7 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
 
             return after(interval: 0.01).then {
                 currentConcurrently -= 1
-                return Promise.resolved(value: number * number)
+                return Promise(value: number * number)
             }
         }
 
@@ -149,9 +149,9 @@ class WhenConcurrentTestCase_Swift: XCTestCase {
             case 0:
                 fatalError()
             case 1:
-                return Promise.fulfilled()
+                return Promise(value: ())
             case 2:
-                return Promise.resolved(error: Error.dummy)
+                return Promise(error: Error.dummy)
             case _:
                 XCTFail()
                 return nil

@@ -29,7 +29,7 @@ class Test232: XCTestCase {
                     let sentinel = arc4random()
 
                     func xFactory() -> Promise<UInt32> {
-                        return Promise.resolved(value: sentinel)
+                        return Promise(value: sentinel)
                     }
 
                     testPromiseResolution(factory: xFactory) { promise, expectation in
@@ -64,7 +64,7 @@ class Test232: XCTestCase {
                     let sentinel = arc4random()
 
                     func xFactory() -> Promise<UInt32> {
-                        return Promise.resolved(error: Error.sentinel(sentinel))
+                        return Promise(error: Error.sentinel(sentinel))
                     }
 
                     testPromiseResolution(factory: xFactory) { promise, expectation in
@@ -105,11 +105,11 @@ class Test232: XCTestCase {
 extension Test232 {
     private func testPromiseResolution(factory: () -> Promise<UInt32>, line: UInt = #line, test: (Promise<UInt32>, XCTestExpectation) -> Void) {
         specify("via return from a fulfilled promise", file: #file, line: line) { d, expectation in
-            let promise = Promise.resolved(value: arc4random()).then { _ in factory() }
+            let promise = Promise(value: arc4random()).then { _ in factory() }
             test(promise, expectation)
         }
         specify("via return from a rejected promise", file: #file, line: line) { d, expectation in
-            let promise: Promise<UInt32> = Promise.resolved(error: Error.dummy).recover { _ in factory() }
+            let promise: Promise<UInt32> = Promise(error: Error.dummy).recover { _ in factory() }
             test(promise, expectation)
         }
     }

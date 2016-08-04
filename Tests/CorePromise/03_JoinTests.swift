@@ -6,29 +6,29 @@ import XCTest
 
 class JoinTests: XCTestCase {
     func testImmediates() {
-        let successPromise = Promise.fulfilled()
+        let successPromise = Promise(value: ())
 
         var joinFinished = false
         join(successPromise).then(on: zalgo) { _ in joinFinished = true }
         XCTAssert(joinFinished, "Join immediately finishes on fulfilled promise")
         
-        let promise2 = Promise.resolved(value: 2)
-        let promise3 = Promise.resolved(value: 3)
-        let promise4 = Promise.resolved(value: 4)
+        let promise2 = Promise(value: 2)
+        let promise3 = Promise(value: 3)
+        let promise4 = Promise(value: 4)
         var join2Finished = false
         join(promise2, promise3, promise4).then(on: zalgo) { _ in join2Finished = true }
         XCTAssert(join2Finished, "Join immediately finishes on fulfilled promises")
     }
     
     func testImmediateErrors() {
-        let errorPromise = Promise<Void>.resolved(error: NSError(domain: "", code: 0, userInfo: nil))
+        let errorPromise = Promise<Void>(error: NSError(domain: "", code: 0, userInfo: nil))
         var joinFinished = false
         join(errorPromise).asVoid().recover(on: zalgo) { _ in joinFinished = true }
         XCTAssert(joinFinished, "Join immediately finishes on rejected promise")
         
-        let errorPromise2 = Promise<Void>.resolved(error: NSError(domain: "", code: 0, userInfo: nil))
-        let errorPromise3 = Promise<Void>.resolved(error: NSError(domain: "", code: 0, userInfo: nil))
-        let errorPromise4 = Promise<Void>.resolved(error: NSError(domain: "", code: 0, userInfo: nil))
+        let errorPromise2 = Promise<Void>(error: NSError(domain: "", code: 0, userInfo: nil))
+        let errorPromise3 = Promise<Void>(error: NSError(domain: "", code: 0, userInfo: nil))
+        let errorPromise4 = Promise<Void>(error: NSError(domain: "", code: 0, userInfo: nil))
         var join2Finished = false
         join(errorPromise2, errorPromise3, errorPromise4).asVoid().recover(on: zalgo) { _ in join2Finished = true }
         XCTAssert(join2Finished, "Join immediately finishes on rejected promises")

@@ -8,26 +8,26 @@ class PromiseTests: XCTestCase {
 
     func testPending() {
         XCTAssertTrue(Promise<Void>.pending().promise.isPending)
-        XCTAssertFalse(Promise.fulfilled().isPending)
-        XCTAssertFalse(Promise<Void>.resolved(error: Error.dummy).isPending)
+        XCTAssertFalse(Promise(value: ()).isPending)
+        XCTAssertFalse(Promise<Void>(error: Error.dummy).isPending)
     }
 
     func testResolved() {
         XCTAssertFalse(Promise<Void>.pending().promise.isResolved)
-        XCTAssertTrue(Promise.fulfilled().isResolved)
-        XCTAssertTrue(Promise<Void>.resolved(error: Error.dummy).isResolved)
+        XCTAssertTrue(Promise(value: ()).isResolved)
+        XCTAssertTrue(Promise<Void>(error: Error.dummy).isResolved)
     }
 
     func testFulfilled() {
         XCTAssertFalse(Promise<Void>.pending().promise.isFulfilled)
-        XCTAssertTrue(Promise.fulfilled().isFulfilled)
-        XCTAssertFalse(Promise<Void>.resolved(error: Error.dummy).isFulfilled)
+        XCTAssertTrue(Promise(value: ()).isFulfilled)
+        XCTAssertFalse(Promise<Void>(error: Error.dummy).isFulfilled)
     }
 
     func testRejected() {
         XCTAssertFalse(Promise<Void>.pending().promise.isRejected)
-        XCTAssertTrue(Promise<Void>.resolved(error: Error.dummy).isRejected)
-        XCTAssertFalse(Promise.fulfilled().isRejected)
+        XCTAssertTrue(Promise<Void>(error: Error.dummy).isRejected)
+        XCTAssertFalse(Promise(value: ()).isRejected)
     }
 
     func testDispatchQueueAsyncExtensionReturnsPromise() {
@@ -60,8 +60,8 @@ class PromiseTests: XCTestCase {
 
     func testCustomStringConvertible() {
         XCTAssert(String(Promise<Void>.pending().promise).contains("Pending"))
-        XCTAssert(String(Promise.fulfilled()).contains("Fulfilled"))
-        XCTAssert(String(Promise<Void>.resolved(error: Error.dummy)).contains("Rejected"))
+        XCTAssert(String(Promise(value: ())).contains("Fulfilled"))
+        XCTAssert(String(Promise<Void>(error: Error.dummy)).contains("Rejected"))
     }
 
     func testCannotFulfillWithError() {
@@ -71,9 +71,9 @@ class PromiseTests: XCTestCase {
 
         let bar = Promise<Error>.pending()
 
-        let baz = Promise.resolved(value: Error.dummy)
+        let baz = Promise(value: Error.dummy)
 
-        let bad = Promise.fulfilled().then { Error.dummy }
+        let bad = Promise(value: ()).then { Error.dummy }
     }
 }
 

@@ -128,7 +128,7 @@ public func when<U, V, X>(fulfilled pu: Promise<U>, _ pv: Promise<V>, _ px: Prom
 public func when<T, PromiseIterator: IteratorProtocol where PromiseIterator.Element == Promise<T> >(fulfilled promiseIterator: PromiseIterator, concurrently: Int) -> Promise<[T]> {
 
     guard concurrently > 0 else {
-        return Promise.resolved(error: PMKError.whenConcurrentlyZero)
+        return Promise(error: PMKError.whenConcurrentlyZero)
     }
 
     var generator = promiseIterator
@@ -218,7 +218,7 @@ public func when<T>(resolved promises: Promise<T>...) -> Promise<[Result<T>]> {
 
 /// Wait for all promises in a set to resolve.
 public func when<T>(resolved promises: [Promise<T>]) -> Promise<[Result<T>]> {
-    guard !promises.isEmpty else { return Promise.resolved(value: []) }
+    guard !promises.isEmpty else { return Promise(value: []) }
 
     var countdown = promises.count
     let barrier = DispatchQueue(label: "org.promisekit.barrier.join", attributes: .concurrent)

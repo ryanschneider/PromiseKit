@@ -56,7 +56,7 @@ class Test_CKContainer_Swift: XCTestCase {
 
         let ex = expectation(description: "")
         let pp = CKApplicationPermissions.userDiscoverability
-        MockContainer().statusForApplicationPermission(pp).then {
+        MockContainer().status(forApplicationPermission: pp).then {
             XCTAssertEqual($0, CKApplicationPermissionStatus.granted)
         }.then(execute: ex.fulfill)
         waitForExpectations(timeout: 1, handler: nil)

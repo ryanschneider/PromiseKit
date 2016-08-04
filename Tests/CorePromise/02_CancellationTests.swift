@@ -85,7 +85,7 @@ class CancellationTests: XCTestCase {
             ex.fulfill()
         }
 
-        Promise.fulfilled().then {
+        Promise(value: ()).then {
             throw NSError(domain: NSURLErrorDomain, code: URLError.cancelled.rawValue)
         }.catch { _ in
             XCTFail()
@@ -102,7 +102,7 @@ class CancellationTests: XCTestCase {
             ex.fulfill()
         }
 
-        Promise.fulfilled().then {
+        Promise(value: ()).then {
             throw NSError(domain: NSURLErrorDomain, code: NSURLErrorCancelled, userInfo: [:])
         }.catch { _ in
             XCTFail()
@@ -119,7 +119,7 @@ class CancellationTests: XCTestCase {
             ex.fulfill()
         }
 
-        Promise.fulfilled().then {
+        Promise(value: ()).then {
             throw Error.cancel as NSError
         }.catch { _ in
             XCTFail()

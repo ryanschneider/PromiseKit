@@ -25,7 +25,7 @@ extension CKContainer {
     }
 
     /// Checks the status of the specified permission asynchronously.
-    public func status(forApplicationPermissions applicationPermissions: CKApplicationPermissions) -> Promise<CKApplicationPermissionStatus> {
+    public func status(forApplicationPermission applicationPermissions: CKApplicationPermissions) -> Promise<CKApplicationPermissionStatus> {
         return Promise.wrap { status(forApplicationPermission: applicationPermissions, completionHandler: $0) }
     }
 

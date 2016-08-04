@@ -46,7 +46,7 @@ class Test224: XCTestCase {
                 }
                 specify("when one `onFulfilled` is added inside another `onFulfilled`") { _, expectation in
                     var firstOnFulfilledFinished = false
-                    let promise = Promise.fulfilled()
+                    let promise = Promise(value: ())
                     promise.then { _ -> Void in
                         promise.then { _ -> Void in
                             XCTAssertTrue(firstOnFulfilledFinished)
@@ -57,8 +57,8 @@ class Test224: XCTestCase {
                 }
 
                 specify("when `onFulfilled` is added inside an `onRejected`") { _, expectation in
-                    var promise1 = Promise<Void>.resolved(error: Error.dummy)
-                    var promise2 = Promise.fulfilled()
+                    var promise1 = Promise<Void>(error: Error.dummy)
+                    var promise2 = Promise(value: ())
                     var firstOnRejectedFinished = false
 
                     promise1.catch { _ in
@@ -105,8 +105,8 @@ class Test224: XCTestCase {
                     XCTAssertFalse(onRejectedCalled)
                 }
                 specify("when `onRejected` is added inside an `onFulfilled`") { d, expectation in
-                    var promise1 = Promise.fulfilled()
-                    var promise2 = Promise<Void>.resolved(error: Error.dummy)
+                    var promise1 = Promise(value: ())
+                    var promise2 = Promise<Void>(error: Error.dummy)
                     var firstOnFulfilledFinished = false
 
                     promise1.then { _ -> Void in
@@ -118,7 +118,7 @@ class Test224: XCTestCase {
                     }
                 }
                 specify("when one `onRejected` is added inside another `onRejected`") { d, expectation in
-                    var promise = Promise<Void>.resolved(error: Error.dummy)
+                    var promise = Promise<Void>(error: Error.dummy)
                     var firstOnRejectedFinished = false;
 
                     promise.catch { _ in
