@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.license = 'MIT'
   s.summary = 'A delightful Promises implementation for iOS and OS X.'
   s.homepage = 'http://promisekit.org'
-  s.description = 'UIActionSheet UIAlertView CLLocationManager MFMailComposeViewController ACAccountStore StoreKit SKRequest SKProductRequest blocks'
+  s.description = 'A thoughtful and complete implementation of promises for iOS and macOS with first-class support for both Objective-C and Swift.'
   s.social_media_url = 'https://twitter.com/mxcl'
   s.authors  = { 'Max Howell' => 'mxcl@me.com' }
   s.documentation_url = 'http://promisekit.org/docs/'
